@@ -1,10 +1,11 @@
-const {Autohook, validateWebhook, validateSignature} = require('..');
+const {Autohook, validateWebhook, validateSignature} = require("twitter-autohook");
 
 const url = require('url');
 const ngrok = require('ngrok');
 const http = require('http');
+require("dotenv").config();
 
-const PORT = process.env.PORT || 4242;
+const PORT = process.env.PORT || 3000;
 
 const startServer = (port, auth) => http.createServer((req, res) => {
   const route = url.parse(req.url, true);
@@ -52,10 +53,14 @@ const startServer = (port, auth) => http.createServer((req, res) => {
 
 (async () => {
   try {
-
-    const url = await ngrok.connect(PORT);
+    let url;
+    if (process.env.TWITTER_WEBHOOK_ENV === "dev") {
+      url = await ngrok.connect(PORT);    
+    } else {
+      url = process.env.HOST_URL;
+    }
+    
     const webhookURL = `${url}/standalone-server/webhook`;
-
     const config = {
       token: process.env.TWITTER_ACCESS_TOKEN,
       token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
