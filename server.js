@@ -53,13 +53,7 @@ const startServer = (port, auth) => http.createServer((req, res) => {
 
 (async () => {
   try {
-    let url;
-    if (process.env.TWITTER_WEBHOOK_ENV === "dev") {
-      url = await ngrok.connect(PORT);    
-    } else {
-      url = process.env.HOST_URL;
-    }
-    
+    const url = process.env.HOST_URL || await ngrok.connect(PORT);    
     const webhookURL = `${url}/standalone-server/webhook`;
     const config = {
       token: process.env.TWITTER_ACCESS_TOKEN,
