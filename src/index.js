@@ -1,4 +1,7 @@
 import bot from "./bot";
+import webhookRouter from "./routes/webhook";
+import apiRouter from "./routes/api";
+
 const http = require("http");
 
 const express = require("express");
@@ -18,6 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
+
+app.use("/webhook", webhookRouter);
+app.use("/api", apiRouter);
 
 const startServer = (port) => {
   const server = http.createServer(app);

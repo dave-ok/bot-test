@@ -8,7 +8,7 @@ const url = require("url");
 const webhookRouter = express.Router();
 const auth = require("config").get("auth");
 
-webhookRouter.get("/webhook", (req, res) => {
+webhookRouter.get("/", (req, res) => {
   if (req.query.crc_token) {
     try {
       if (!validateSignature(req.headers, auth, url.parse(req.url).query)) {
@@ -26,7 +26,7 @@ webhookRouter.get("/webhook", (req, res) => {
   res.end();
 });
 
-webhookRouter.post("/webhook", (req, res) => {
+webhookRouter.post("/", (req, res) => {
   try {
     if (!validateSignature(req.headers, auth, req.body)) {
       console.error("Cannot validate webhook signature");
