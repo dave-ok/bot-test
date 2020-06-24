@@ -40,6 +40,7 @@ async function accessToken({oauth_token, oauth_token_secret}, verifier) {
   
   const req = await post({url: accessTokenURL, oauth: oAuthConfig});
   if (req.body) {
+    console.log(req.body);
     return qs.parse(req.body);
   } else {
     throw new Error('Cannot get an OAuth access token');
