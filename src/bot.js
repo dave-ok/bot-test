@@ -1,49 +1,49 @@
+const ngrok = require("ngrok");
+const auth = require("config").get("auth");
+const port = require("config").get("server").port;
+const Twit = require("twit");
+import { Autohook } from "twitter-autohook";
+
 const bot = {
   async initilaize() {
     //setup hooks
-    await this.initHooks();       
+    await this.initHooks();
 
     //setup twit
     await this.initTwit();
-
   },
 
   async initHooks() {
     // try to make this more elegant
-    const url = process.env.NODE_ENV = "development" ? await ngrok.connect(PORT) : process.env.URL_BASE;    
+    const url =
+      process.env.NODE_ENV === "development"
+        ? await ngrok.connect(port)
+        : process.env.URL_BASE;
     const webhookURL = `${url}/webhook`;
 
-    //change this to use config.js
-    config = {
-      token: process.env.TWITTER_ACCESS_TOKEN,
-      token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
-      consumer_key: process.env.TWITTER_CONSUMER_KEY,
-      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      env: process.env.TWITTER_WEBHOOK_ENV,
-    };
-
-    this.webhook = new Autohook(config);
+    this.webhook = new Autohook(auth);
 
     // assign event handlers here
 
     await this.webhook.removeWebhooks();
     await this.webhook.start(webhookURL);
     await this.webhook.subscribe({
-      oauth_token: config.token,
-      oauth_token_secret: config.token_secret,
+      oauth_token: auth.token,
+      oauth_token_secret: auth.token_secret,
     });
   },
 
   async initTwit() {
     //change this to use config.js
-    config = {
-      token: process.env.TWITTER_ACCESS_TOKEN,
-      token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
-      consumer_key: process.env.TWITTER_CONSUMER_KEY,
-      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      env: process.env.TWITTER_WEBHOOK_ENV,
+    const config = {
+      consumer_key: auth.consumer_key,
+      consumer_secret: auth.consumer_secret,
+      access_token: auth.token,
+      access_token_secret: auth.token_secret,
     };
 
     this.twit = new Twit(config);
-  }
-}
+  },
+};
+
+export default bot;
